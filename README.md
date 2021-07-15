@@ -20,7 +20,7 @@ be added as the next stage in this project to avoid that
 ### Example Output
 <center>original Image</center>
 
-![Screenshot](example_images/wolf.jpg){:height="50%" width="50%"}
+![Screenshot](example_images/wolf.jpg)
 
 Ascii Image in Color       |  Ascii Image in Black and White
 :-------------------------:|:-------------------------:
