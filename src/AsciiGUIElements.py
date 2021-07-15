@@ -12,7 +12,7 @@ from PyQt5.QtWidgets import (
 )
 
 
-class AsciiSection(QWidget):
+class __AsciiSection(QWidget):
     def __init__(self):
         pass
 
@@ -127,7 +127,7 @@ class AsciiSection(QWidget):
 
 
 # container for the ascii video gen
-class AsciiImageGenerationSection(AsciiSection):
+class AsciiImageGenerationSection(__AsciiSection):
     def __init__(self, title, width, media_filter, media_generator):
         # init the super
         QWidget.__init__(self)
@@ -192,7 +192,7 @@ class AsciiImageGenerationSection(AsciiSection):
 
 
 # container for the ascii video gen
-class AsciiVideoGenerationSection(AsciiSection):
+class AsciiVideoGenerationSection(__AsciiSection):
     def __init__(self, title, width, media_filter, media_generator):
         # init the super
         QWidget.__init__(self)
@@ -252,7 +252,7 @@ class AsciiVideoGenerationSection(AsciiSection):
         # add the event that occurs on final gen
         self.generate_art_button.clicked.connect(lambda e: self.set_generation_state(media_generator(
             self.selected_file_display.text(), int(self.quality_label.text().split(':')[1].strip()),
-            self.color_check_box.checkState(), self.sound_check_box.checkState())))
+            self.color_check_box.checkState(), self.sound_check_box.checkState()), self.generation_message))
 
         # add a stretch at the end to set each element as a finite height
         self.v_box.addStretch()

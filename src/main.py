@@ -33,7 +33,6 @@ class Window(QMainWindow):
         # return said file name
         return path + "(" + str(iterations) + ")" + file_extension
 
-    # TODO make the ascii image on a sep thread
     # TODO make a progress bar for generation
     def generate_ascii_image(self, path, quality, is_colored):
         """
@@ -41,8 +40,12 @@ class Window(QMainWindow):
         Returns error string if something went wrong
         :param path:
         :param quality:
+        :param is_colored:
         :return:
         """
+        if path == "":
+            return [False, "invalid image path"]
+
         successful_completion, data = self.ascii_image_gen.generate_ascii_image(path, 11 - quality, is_colored)
 
         # if not a successful image generation return the data denoting the error string
@@ -62,9 +65,17 @@ class Window(QMainWindow):
         return [True, "Successfully generated an ascii image"]
 
     # add status updates for the video as they take a while to make
-    # TODO make the ascii video on a sep thread
     # TODO make a progress bar for generation
     def generate_ascii_video(self, path, quality, is_colored, has_audio):
+        """
+        Generates an ascii video at the specific path at the given quality (1-10) \n
+        Returns error string if something went wrong \n
+        :param path:
+        :param quality:
+        :param is_colored:
+        :param has_audio:
+        :return:
+        """
         file_save_name = QFileDialog.getSaveFileName()[0]
         # if the file name is not valid return the error string
         if file_save_name == "":

@@ -1,10 +1,10 @@
 import math
 import cv2
 import os
-import imageio
 import numpy
 from PIL import Image, ImageDraw, ImageFont
 import moviepy.editor as mp
+import time
 
 # TODO create more characters in dict
 # ascii dict used
@@ -19,6 +19,59 @@ ascii_dict[170:220] = (220 - 170) * ['#']
 ascii_dict[220:256] = (256 - 220) * ['@']
 
 
+# TODO add param for custom res while keeping same quality
+def create_ascii_image(cv2_image, quality, is_colored):
+    """
+    Generates an ascii equivalent of an image. \n
+    Returns PIL image \n
+    :param cv2_image:
+    :param quality:
+    :param is_colored:
+    :return:
+    """
+    # gets the image width and height
+    image_height = cv2_image.shape[0]
+    image_width = cv2_image.shape[1]
+
+    # creates the new image with the correct sizing
+    font = ImageFont.load_default()
+    char_width = font.getsize("x")[0]
+    char_height = font.getsize("$")[1]
+
+    # create a new img
+    new_img = Image.new("RGB", (math.ceil((image_width * char_width) / quality), math.ceil((image_height * char_height)
+                                                                               / (2 * quality))), 'black')
+    # add a drawing to the image
+    draw = ImageDraw.Draw(new_img)
+
+    y_height = 0
+
+    # set the ascii chars for the image
+    # set the ascii chars for the image
+    for i in range(image_height):
+        if i % (quality * 2) == 0:
+            text = ''
+            y_width = 0
+            for x in range(image_width):
+                if x % quality == 0:
+                    ascii_char = ascii_dict[int((int(format(cv2_image[i, x, 0])) + int(
+                        format(cv2_image[i, x, 1])) + int(format(cv2_image[i, x, 2]))) / 3)]
+                    text += ascii_char
+
+                    # set fill to black if no color otherwise set the color to the given pixels color
+                    fill = (cv2_image[i, x, 2], cv2_image[i, x, 1], cv2_image[i, x, 0]) if is_colored \
+                        else (255, 255, 255)
+
+                    # colors the cell
+                    draw.text((y_width, y_height), ascii_char, font=font, fill=fill)
+                    y_width += char_width
+            y_height += char_height
+
+    # return the new image
+    return new_img
+
+
+# TODO add multi threading on image creation
 class ASCIIVideo:
     def __init__(self):
         pass
@@ -29,15 +82,14 @@ class ASCIIVideo:
         :param original_video_path:
         :param quality:
         :param save_file_path:
+        :param is_colored:
+        :param has_audio:
         :return:
         """
+        start_video = time.time()
         # gets a reference to the video and fps
         cam = cv2.VideoCapture(original_video_path)
         fps = cam.get(cv2.CAP_PROP_FPS)
-
-        # frame counter
-        frame_count = 0
-        keep_reading = True
 
         # setup for Image creation
         font = ImageFont.load_default()
@@ -54,6 +106,12 @@ class ASCIIVideo:
         video = cv2.VideoWriter(video_file_path, fourcc, fps, (math.ceil(vid_width * l_width / quality),
                                                               math.ceil(vid_height * l_height / (quality * 2))))
 
+
+        # frame counter
+        frame_count = 0
+        keep_reading = True
+
+        start_generating_ascii_images = time.time()
         # keep reading the video until no more frames
         while keep_reading:
             # read the image
@@ -64,39 +122,16 @@ class ASCIIVideo:
                 # add to the total count
                 frame_count += 1
 
-                # create image container for ascii image
-                new_img = Image.new("RGB", (math.ceil((vid_width * l_width) / quality), math.ceil((vid_height * l_height) /
-                                                                                      (2 * quality))), 'black')
-                draw = ImageDraw.Draw(new_img)
-
-                # transfer image to ascii
-                y_height = 0
-
-                # set the ascii chars for the image
-                for i in range(vid_height):
-                    if i % (quality * 2) == 0:
-                        text = ''
-                        y_width = 0
-                        for x in range(vid_width):
-                            if x % quality == 0:
-                                ascii_char = ascii_dict[int((int(format(frame[i, x, 0])) + int(
-                                    format(frame[i, x, 1])) + int(format(frame[i, x, 2]))) / 3)]
-                                text += ascii_char
-
-                                # set fill to black if no color otherwise set the color to the given pixels color
-                                fill = (frame[i, x, 2], frame[i, x, 1], frame[i, x, 0]) if is_colored \
-                                    else (255, 255, 255)
-
-                                # colors the cell
-                                draw.text((y_width, y_height), ascii_char, font=font, fill=fill)
-                                y_width += l_width
-                        y_height += l_height
+                # create the ascii image
+                new_img = create_ascii_image(frame, quality, is_colored)
 
                 # convert PIL image to opencv2 image and convert RGB to BGR
                 opencv_new_image = cv2.cvtColor(numpy.asarray(new_img), cv2.COLOR_RGB2BGR)
 
                 # add image to video
                 video.write(opencv_new_image)
+
+        end_generating_ascii_images = time.time()
 
         # Release all space and windows once done
         cam.release()
@@ -117,6 +152,10 @@ class ASCIIVideo:
         # remove the video only file
         os.remove(video_file_path)
 
+        end_video = time.time()
+        print("Total time to make video: " + str(int(end_video - start_video)))
+        print("Time to generate ascii images: " + str(int(end_generating_ascii_images - start_generating_ascii_images)))
+
         return [True, "Finished Creating Ascii Video"]
 
 
@@ -125,43 +164,21 @@ class ASCIIImage:
         pass
 
     def generate_ascii_image(self, path, quality, is_colored):
+        """
+        generates an ascii image of the image at the given path \n
+        :param path:
+        :param quality:
+        :param is_colored:
+        :return:
+        """
         # checks if the path is proper otherwise returns an error
         try:
-            pic = imageio.imread(path)
+            pic = cv2.imread(path)
         except ValueError:
             return [False, "File path does not lead to an image"]
-        height = int(format(pic.shape[0]))
-        width = int(format(pic.shape[1]))
 
-        # creates the new image with the correct sizing
-        font = ImageFont.load_default()
-        l_width = font.getsize("x")[0]
-        l_height = font.getsize("$")[1]
-        new_img = Image.new("RGB", (int((width * l_width) / quality), int((height * l_height) / (2 * quality))),
-                            'black')
-        draw = ImageDraw.Draw(new_img)
-
-        y_height = 0
-
-        # set the ascii chars for the image
-        # set the ascii chars for the image
-        for i in range(height):
-            if i % (quality * 2) == 0:
-                text = ''
-                y_width = 0
-                for x in range(width):
-                    if x % quality == 0:
-                        ascii_char = ascii_dict[int((int(format(pic[i, x, 0])) + int(
-                            format(pic[i, x, 1])) + int(format(pic[i, x, 2]))) / 3)]
-                        text += ascii_char
-
-                        # set fill to black if no color otherwise set the color to the given pixels color
-                        fill = (pic[i, x, 0], pic[i, x, 1], pic[i, x, 2]) if is_colored else (255, 255, 255)
-
-                        # colors the cell
-                        draw.text((y_width, y_height), ascii_char, font=font, fill=fill)
-                        y_width += l_width
-                y_height += l_height
+        # create the ascii image
+        new_img = create_ascii_image(pic, quality, is_colored)
 
         # returns a successful gen and the created img
         return [True, new_img]
