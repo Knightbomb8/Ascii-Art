@@ -24,4 +24,4 @@ be added as the next stage in this project to avoid that
 
 Ascii Image in Color       |  Ascii Image in Black and White
 :-------------------------:|:-------------------------:
-![Screenshot](https://github.com/Knightbomb8/Ascii-Art/blob/main/example_images/ascii_wolf_color.jpg) | ![Screenshot](example_images/wolf_ascii_bw.jpg) 
+![Color Image](https://github.com/Knightbomb8/Ascii-Art/blob/main/example_images/ascii_wolf_color.jpg) | ![Black and White Image](https://github.com/Knightbomb8/Ascii-Art/blob/main/example_images/ascii_wolf_bw.jpg) 
