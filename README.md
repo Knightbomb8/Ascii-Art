@@ -18,10 +18,12 @@ a long time at low quality and super long at high quality. Multi threading will
 be added as the next stage in this project to avoid that
 
 ### Example Output
+Ascii Image in Color       |  Ascii Image in Black and White
+:-------------------------:|:-------------------------:
+![Color Image](https://github.com/Knightbomb8/Ascii-Art/blob/main/example_images/ascii_wolf_color.jpg) | ![Black and White Image](https://github.com/Knightbomb8/Ascii-Art/blob/main/example_images/ascii_wolf_bw.jpg) 
+
 <center>original Image</center>
 
 ![Screenshot](example_images/wolf.jpg)
 
-Ascii Image in Color       |  Ascii Image in Black and White
-:-------------------------:|:-------------------------:
-![Color Image](https://github.com/Knightbomb8/Ascii-Art/blob/main/example_images/ascii_wolf_color.jpg) | ![Black and White Image](https://github.com/Knightbomb8/Ascii-Art/blob/main/example_images/ascii_wolf_bw.jpg) 
+
