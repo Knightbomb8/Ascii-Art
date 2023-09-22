@@ -35,8 +35,10 @@ def create_ascii_image(cv2_image, quality, is_colored):
 
     # creates the new image with the correct sizing
     font = ImageFont.load_default()
-    char_width = font.getsize("x")[0]
-    char_height = font.getsize("$")[1]
+
+    char_bbox = font.getbbox("N")
+    char_width = char_bbox[2]
+    char_height = char_bbox[3]
 
     # create a new img
     new_img = Image.new("RGB", (math.ceil((image_width * char_width) / quality), math.ceil((image_height * char_height)
