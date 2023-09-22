@@ -8,7 +8,6 @@ from PyQt5.QtWidgets import (
 from AsciiGUIElements import *
 from ASCIIGenerators import *
 
-
 # create a window
 def main():
     app = QApplication(sys.argv)
@@ -94,8 +93,8 @@ class Window(QMainWindow):
         return results
 
     def __init__(self):
-        self.window_height = 1920
-        self.window_width = 1080
+        self.window_height = 960
+        self.window_width = 540
 
         # ascii generators
         self.ascii_image_gen = ASCIIImage()

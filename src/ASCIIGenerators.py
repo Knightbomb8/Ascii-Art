@@ -18,7 +18,7 @@ ascii_dict[128:170] = (170 - 128) * ['w']
 ascii_dict[170:220] = (220 - 170) * ['#']
 ascii_dict[220:256] = (256 - 220) * ['@']
 
-
+# ascii_dict = [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '"', '"', '"', '"', '"', '"', '"', '"', '"', '"', '"', '"', '"', '"', '"', '"', '"', '"', '"', '*', '*', '*', '*', '!', '!', '!', '!', '!', '!', '!', '!', 'I', 'I', 'I', 'I', 'I', 'I', '|', '|', '(', '(', ')', ')', ')', ')', ')', '}', '}', '}', '}', '}', '{', '{', '{', '{', '{', 'z', 'z', 'z', 'z', 'z', 'z', 'z', 'y', 'y', 'T', 'T', 'T', 'T', 'o', 'o', 'o', 'o', 'Y', 'F', '4', '4', '4', '4', '4', 'V', 'V', 'V', 'V', 'p', '3', '3', '2', '2', 'q', 'q', 'q', '0', '0', '0', '5', '5', 'C', 'C', 'C', 'Z', 'U', 'U', 'X', 'H', 'H', 'P', '#', '#', '#', 'S', 'S', 'S', 'S', 'S', 'E', 'E', 'E', 'O', 'O', 'O', 'O', '$', '$', '$', 'D', 'D', '&', '&', '%', '%', 'R', 'R', 'R', 'Q', 'Q', 'Q', 'Q', 'Q', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', '@', '@', '@', '@', '@', '@', '@', '@', '@', '@', '@', '@', '@', '@', '@', '@', '@', '@', '@', '@', '@', '@', '@', '@', '@', '@', '@', '@', '@', '@', '@', '@', '@', '@', '@', '@', '@']
 # TODO add param for custom res while keeping same quality
 def create_ascii_image(cv2_image, quality, is_colored):
     """
@@ -54,8 +54,10 @@ def create_ascii_image(cv2_image, quality, is_colored):
             y_width = 0
             for x in range(image_width):
                 if x % quality == 0:
-                    ascii_char = ascii_dict[int((int(format(cv2_image[i, x, 0])) + int(
-                        format(cv2_image[i, x, 1])) + int(format(cv2_image[i, x, 2]))) / 3)]
+                    # get greyscale val
+                    grey_scale_val = int((int(format(cv2_image[i, x, 0])) + int(format(cv2_image[i, x, 1])) + int(format(cv2_image[i, x, 2]))) / 3)
+
+                    ascii_char = ascii_dict[int(grey_scale_val)]
                     text += ascii_char
 
                     # set fill to black if no color otherwise set the color to the given pixels color
